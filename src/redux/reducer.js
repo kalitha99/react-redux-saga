@@ -9,6 +9,7 @@ const initialstate = {
 const userRducer = (state = initialstate, action) => {
   switch (action.type) {
     case types.LOAD_USER_START:
+    case types.CREATE_USER:
       return {
         ...state,
         loading: true,
@@ -22,11 +23,19 @@ const userRducer = (state = initialstate, action) => {
       };
 
     case types.LOAD_USER_ERROR:
+    case types.CREATE_USER_ERROR:
       return {
         ...state,
         loading: false,
         error: action.payload,
       };
+
+    case types.CREATE_USER_SUCCESS:
+        return {
+          ...state,
+          loading: false,
+        
+        };
 
     default:
       return state;

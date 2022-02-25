@@ -3,9 +3,37 @@
     {
       "id": 1,
       "name": "james",
-      "mail":"123@gmail.com",
+      "mail": "123@gmail.com",
       "phone": "0778945632",
       "address": "no50,fff"
+    },
+    {
+      "name": "saman",
+      "mail": "saman@gmail.com",
+      "phone": "0778945632",
+      "address": "us",
+      "id": 2
+    },
+    {
+      "name": "kamal",
+      "mail": "kamal@gmail.com",
+      "phone": "0445678963",
+      "address": "ca",
+      "id": 3
+    },
+    {
+      "name": "kasun",
+      "mail": "kasun@gmail.com",
+      "phone": "0778966123",
+      "address": "pw",
+      "id": 4
+    },
+    {
+      "name": "amal",
+      "mail": "amal@gmail.com",
+      "phone": "0771230612",
+      "address": "ca",
+      "id": 5
     }
   ]
 }
