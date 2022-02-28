@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { loadUserStart } from "./redux/actions";
+import { deleteUser, loadUserStart } from "./redux/actions";
 import { Link } from "react-router-dom";
 import {
   MDBTable,
@@ -11,16 +11,33 @@ import {
   MDBTooltip,
   MDBSpinner,
 } from "mdb-react-ui-kit";
+import { toast } from "react-toastify";
 
 function Home() {
   const dispatch = useDispatch();
-  const { users } = useSelector((state) => state.data);
+  const { users, loading, error } = useSelector((state) => state.data);
 
   useEffect(() => {
     dispatch(loadUserStart());
   }, []);
 
-  const handelDelete = (id) => {};
+  useEffect(() => error && toast.error(error),
+   [error]);
+
+  if (loading) {
+    return (
+      <MDBSpinner style={{ marginTop: "150px" }} role="status">
+        <span className="visually-hidden">Loading...</span>
+      </MDBSpinner>
+    );
+  }
+
+  const handelDelete = (id) => {
+    if (window.confirm("are you sure you want to delete")) {
+      dispatch(deleteUser(id));
+      toast.success("User deleted sucessfully");
+    }
+  };
 
   return (
     <div className="container" style={{ marginTop: "50px" }}>
@@ -75,17 +92,9 @@ function Home() {
                   </Link>
 
                   {"  "}
+
                   
-                  <Link to={`/info/${item.id}`}>
-                    <MDBTooltip title="View contact" tag="a">
-                      <MDBIcon
-                        fas
-                        icon="eye"
-                        style={{ color: "#3b5998" }}
-                        size="lg"
-                      />
-                    </MDBTooltip>
-                  </Link>
+                  
                 </td>
               </tr>
             </MDBTableBody>

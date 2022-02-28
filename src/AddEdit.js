@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { MDBValidation, MDBInput, MDBBtn } from "mdb-react-ui-kit";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { createUser } from "./redux/actions";
+import { createUser, updateUser } from "./redux/actions";
 import { toast } from 'react-toastify';
 
 const initialstate = {
@@ -15,16 +15,45 @@ const initialstate = {
 function AddEdit() {
   const history = useHistory();
   const dispatch = useDispatch();
+  const {id} = useParams()
+  const {users} = useSelector(state=>state.data)
 
   const [form, setform] = useState(initialstate);
+  const [edit,setEdit] = useState(false)
   const { name, mail, phone, address } = form;
+
+
+  useEffect(()=>{
+    if(id){
+      setEdit(true)
+      const singleUser = users.find(item=>item.id===Number(id))
+      setform({...singleUser})
+    } else{
+      setEdit(false)
+      setform({...initialstate})
+    }
+  },[id])
+
+
 
   const handleSubmit = (e) => {
       e.preventDefault()
-      toast.success("User Added Sucessfully ")
-      dispatch(createUser(form))
-      setTimeout(()=>history.push('/'),500)
+      if(!edit){
+        toast.success("User Added Sucessfully ")
+        dispatch(createUser(form))
+        setTimeout(()=>history.push('/'),500)
+      }else{
+        
+        dispatch(updateUser({id,form}))
+        setEdit(false)
+        toast.success("User Updated Sucessfully ")
+        setTimeout(()=>history.push('/'),500)
+      }
+    
+
   };
+
+
 
   const onChange = (e) => {
     let { name, value } = e.target;
@@ -39,7 +68,7 @@ function AddEdit() {
         style={{ marginTop: "100px" }}
         onSubmit={handleSubmit}
       >
-        <p className="fs-2 fw-boold">Add User Details</p>
+        <p className="fs-2 fw-boold">{!edit?'Add User Details':'Edit User Details'}</p>
         <div
           style={{
             margin: "auto",
@@ -49,7 +78,7 @@ function AddEdit() {
           }}
         >
           <MDBInput
-            value={name}
+            value={name || ''}
             name="name"
             type="text"
             onChange={onChange}
@@ -58,7 +87,7 @@ function AddEdit() {
           />
           <br />
           <MDBInput
-            value={mail}
+            value={mail || ''}
             name="mail"
             type="mail"
             onChange={onChange}
@@ -67,7 +96,7 @@ function AddEdit() {
           />
           <br />
           <MDBInput
-            value={phone}
+            value={phone || ''}
             name="phone"
             type="number"
             onChange={onChange}
@@ -76,7 +105,7 @@ function AddEdit() {
           />
           <br />
           <MDBInput
-            value={address}
+            value={address || ''}
             name="address"
             type="text"
             onChange={onChange}

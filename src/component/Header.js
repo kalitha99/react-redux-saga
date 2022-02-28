@@ -53,14 +53,7 @@ function Header() {
                 </MDBNavbarLink>
               </MDBNavbarItem>
 
-              <MDBNavbarItem>
-                <MDBNavbarLink className="nav-link">
-                  <NavLink to="/about" className="text-white">
-                    About 
-                  </NavLink>
-                </MDBNavbarLink>
-              </MDBNavbarItem>
-
+              
             </MDBNavbarNav>
           </MDBCollapse>
         </MDBContainer>

@@ -1,5 +1,5 @@
 import * as types from "./actionType";
-import { loaduserapi, createUserapi } from "./api";
+import { loaduserapi, createUserapi, deleteuserapi, updateuserapi } from "./api";
 import {
   take,
   takeEvery,
@@ -11,7 +11,16 @@ import {
   call,
 } from "redux-saga/effects";
 
-import { loadUserSuccess, loadUserError, createUserSuccess, createUserError } from "./actions";
+import {
+  loadUserSuccess,
+  loadUserError,
+  createUserSuccess,
+  createUserError,
+  deleteUserSuccess,
+  deleteUserError,
+  updateUserSuccess,
+  updateUserError
+} from "./actions";
 
 export function* onLoadUserStartAsync() {
   try {
@@ -25,10 +34,48 @@ export function* onLoadUserStartAsync() {
   }
 }
 
-export function* onCreateUserStartAsync({payload}) {
-    console.log('saga:',payload)
+
+
+// eslint-disable-next-line require-yield
+export function* onUpdateUserStartAsync({ payload:{id, form} }){
   try {
-    const response = yield call(createUserapi,payload);
+   
+    const response = yield call (updateuserapi,id,form)
+    if (response.status === 200) {
+      yield put (updateUserSuccess())
+    }
+  } catch (error) {
+    yield put (updateUserError(error.response.data))
+  }
+}
+
+
+
+
+export function* onDeleteUserStartAsync(userid) {
+  console.log("deletesaga:", userid);
+  try {
+    const response = yield call(deleteuserapi, userid);
+    if (response.status === 200) {
+      yield delay(500);
+      yield put(deleteUserSuccess(userid));
+    }
+  } catch (error) {
+    yield put(deleteUserError(error.response.data));
+  }
+}
+
+export function* onDeleteUser() {
+  while (true) {
+    const { payload: userid } = yield take(types.DELETE_USER);
+    yield call(onDeleteUserStartAsync, userid);
+  }
+}
+
+export function* onCreateUserStartAsync({ payload }) {
+  console.log("saga:", payload);
+  try {
+    const response = yield call(createUserapi, payload);
     if (response.status === 200) {
       yield put(createUserSuccess(response.data));
     }
@@ -45,7 +92,18 @@ export function* onCreateUser() {
   yield takeLatest(types.CREATE_USER, onCreateUserStartAsync);
 }
 
-const userSagas = [fork(onLoadUser), fork(onCreateUser)];
+
+
+export function* onUpdateUser() {
+  yield takeLatest(types.UPDATE_USER, onUpdateUserStartAsync);
+}
+
+
+
+
+
+
+const userSagas = [fork(onLoadUser), fork(onCreateUser), fork(onDeleteUser), fork(onUpdateUser)];
 
 export default function* rootSags() {
   yield all([...userSagas]);
